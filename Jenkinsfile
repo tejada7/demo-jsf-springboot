@@ -11,9 +11,14 @@ pipeline {
                   sh 'mvn checkstyle:check'
               }
          }
-        stage('Project unit tests') {
+        stage('Run unit tests') {
             steps {
                 sh 'mvn test'
+            }
+        }
+        stage('build docker image') {
+            steps {
+                sh 'mvn package dockerfile:build'
             }
         }
         // stage('Upload to AWS') {
