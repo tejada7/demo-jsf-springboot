@@ -1,4 +1,9 @@
 pipeline {
+    environment {
+        registry = "tejada7/udacitycapstone"
+        registryCredential = 'dockerhub'
+        dockerImage = ''
+    }
     agent any
     stages {
         stage('Lint pom file') {
@@ -16,9 +21,30 @@ pipeline {
                 sh 'mvn test'
             }
         }
-        stage('build docker image') {
+        stage('Creating war file') {
             steps {
-                sh 'mvn package dockerfile:build'
+                sh 'mvn package'
+            }
+        }
+        stage('Building image') {
+            steps{
+                script {
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                }
+            }
+        }
+        stage('Deploy Image') {
+            steps{
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+        stage('Remove Unused docker image') {
+            steps{
+                sh "docker rmi $registry:$BUILD_NUMBER"
             }
         }
         // stage('Upload to AWS') {
