@@ -30,6 +30,11 @@ public class FlightController implements Serializable {
     flights = flightRepository.findAll();
   }
 
+  public void save(Flight flight) {
+    flightRepository.save(flight);
+    flights = flightRepository.findAll();
+  }
+
   public void edit(Flight flight) {
     this.flight = flight;
   }
