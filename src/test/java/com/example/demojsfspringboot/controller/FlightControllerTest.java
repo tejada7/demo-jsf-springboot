@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.given;
 import com.example.demojsfspringboot.model.Flight;
 import com.example.demojsfspringboot.repository.FlightRepository;
 import java.util.ArrayList;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,6 +24,7 @@ class FlightControllerTest {
   FlightController flightController;
 
   @Test
+  @DisplayName("Attempting to retrieve a flight from database")
   void fetchAll() {
     given(flightRepository.findAll()).willReturn(new ArrayList<>());
 
@@ -32,6 +34,7 @@ class FlightControllerTest {
   }
 
   @Test
+  @DisplayName("Attempting to store a flight in database")
   void save() {
     given(flightRepository.save(Mockito.any())).willReturn(new Flight());
     given(flightRepository.findAll()).willReturn(new ArrayList() {{
