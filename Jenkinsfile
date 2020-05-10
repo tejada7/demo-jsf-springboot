@@ -74,23 +74,34 @@ pipeline {
         stage('Deploy to Blue Zone') {
             steps {
                 withAWS(region:'us-west-2', credentials:'AWS') {
-                    sh 'kubectl apply -f green-deployment.json'
-                    sh 'kubectl apply -f blue-green-service.json'
+                    sh 'kubectl apply -f blue-deployment.json'
+                    sh 'kubectl apply -f blue-lb-service.json'
                 }
             }
         }
+        stage('Redirect Traffic To Green Zone?') {
+		    steps {
+			    input "Redirect Traffic To Green Zone ?"
+		    }
+        }
+        stage('Deploy Green Zone') {
+            steps {
+                withAWS(region:'us-west-2', credentials:'AWS') {
+                    sh 'kubectl apply -f green-deployment.json'
+                }
+            }
+        }
+        stage('Direct to Green Zone') {
+		    steps {
+                withAWS(region:'us-west-2', credentials:'AWS') {
+                    sh 'kubectl apply -f green-lb-service.json'
+			    }
+		    }
+	    }
         stage('Remove unused docker image') {
             steps{
                 sh "docker rmi $registry:latest"
             }
         }
-        // stage('Upload to AWS') {
-        //     steps {
-        //         withAWS(region:'us-east-2',credentials:'aws-static') {
-        //         sh 'echo "Uploading content with AWS creds"'
-        //           s3Upload(pathStyleAccessEnabled: true, payloadSigningEnabled: true, file:'project-3/index.html', bucket:'my-s3-bucket-jenkins')
-        //         }
-        //     }
-        // }
     }
 }
