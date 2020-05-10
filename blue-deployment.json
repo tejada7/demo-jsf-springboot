@@ -2,36 +2,37 @@
     "kind": "ReplicationController",
     "apiVersion": "v1",
     "metadata": {
-      "name": "blue",
-      "labels": {
-        "app": "blue"
-      }
+        "name": "blue",
+        "labels": {
+            "app": "blue"
+        }
     },
     "spec": {
-      "replicas": 1,
-      "selector": {
-        "app": "blue"
-      },
-      "template": {
-        "metadata": {
-          "labels": {
+        "replicas": 1,
+        "selector": {
             "app": "blue"
-          }
         },
-        "spec": {
-          "containers": [
-            {
-              "name": "blue",
-              "image": "favio-tejada/demojsfspringboot",
-              "ports": [
-                {
-                  "name": "flight-booking-application",
-                  "containerPort": 8080
+        "template": {
+            "metadata": {
+                "labels": {
+                    "app": "blue"
                 }
-              ]
+            },
+            "spec": {
+                "containers": [
+                    {
+                        "name": "blue",
+                        "image": "tejada7/udacitycapstone:latest",
+                        "imagePullPolicy":"Always",
+                        "ports": [
+                            {
+                                "name": "blue",
+                                "containerPort": 8080
+                            }
+                        ]
+                    }
+                ]
             }
-          ]
         }
-      }
     }
-  }
+}

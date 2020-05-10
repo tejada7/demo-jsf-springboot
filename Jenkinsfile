@@ -29,7 +29,7 @@ pipeline {
         stage('Build image') {
             steps{
                 script {
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                    dockerImage = docker.build registry + ":latest"
                 }
             }
         }
@@ -74,13 +74,14 @@ pipeline {
         stage('Deploy to Blue Zone') {
             steps {
                 withAWS(region:'us-west-2', credentials:'AWS') {
-                    sh 'kubectl apply -f blue-deployment.json'
+                    sh 'kubectl apply -f green-deployment.json'
+                    sh 'kubectl apply -f blue-green-service.json'
                 }
             }
         }
         stage('Remove unused docker image') {
             steps{
-                sh "docker rmi $registry:$BUILD_NUMBER"
+                sh "docker rmi $registry:latest"
             }
         }
         // stage('Upload to AWS') {
