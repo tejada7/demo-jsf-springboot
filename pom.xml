@@ -17,7 +17,7 @@
 
   <properties>
     <java.version>1.8</java.version>
-    <docker.image.prefix>favio-tejada</docker.image.prefix>
+    <docker.image.prefix>tejada7</docker.image.prefix>
   </properties>
 
   <dependencies>
@@ -108,7 +108,8 @@
         <artifactId>dockerfile-maven-plugin</artifactId>
         <version>1.3.6</version>
         <configuration>
-          <repository>${docker.image.prefix}/${project.artifactId}</repository>
+          <!-- <repository>${docker.image.prefix}/${project.artifactId}</repository> -->
+          <repository>${docker.image.prefix}/udacitycapstone</repository>
           <buildArgs>
             <WAR_FILE>target/${project.build.finalName}.war</WAR_FILE>
           </buildArgs>

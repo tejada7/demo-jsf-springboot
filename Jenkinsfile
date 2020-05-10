@@ -21,18 +21,6 @@ pipeline {
                 sh 'mvn test'
             }
         }
-        stage('Create war file') {
-            steps {
-                sh 'mvn package'
-            }
-        }
-        stage('Build image') {
-            steps{
-                script {
-                    dockerImage = docker.build registry + ":latest"
-                }
-            }
-        }
         stage ("Lint dockerfile") {
             agent {
                 docker {
@@ -45,6 +33,18 @@ pipeline {
             post {
                 always {
                     archiveArtifacts 'hadolint_lint.txt'
+                }
+            }
+        }
+        stage('Create war file') {
+            steps {
+                sh 'mvn package'
+            }
+        }
+        stage('Build image') {
+            steps{
+                script {
+                    dockerImage = docker.build(registry + ":latest", "--build-arg WAR_FILE=target/demojsfspringboot-1.0-SNAPSHOT.war .")
                 }
             }
         }
