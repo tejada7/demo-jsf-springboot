@@ -21,15 +21,30 @@ pipeline {
                 sh 'mvn test'
             }
         }
-        stage('Creating war file') {
+        stage('Create war file') {
             steps {
                 sh 'mvn package'
             }
         }
-        stage('Building image') {
+        stage('Build image') {
             steps{
                 script {
                     dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                }
+            }
+        }
+        stage ("Lint dockerfile") {
+            agent {
+                docker {
+                    image 'hadolint/hadolint:latest-debian'
+                }
+            }
+            steps {
+                sh 'hadolint dockerfiles/* | tee -a hadolint_lint.txt'
+            }
+            post {
+                always {
+                    archiveArtifacts 'hadolint_lint.txt'
                 }
             }
         }
@@ -42,7 +57,7 @@ pipeline {
                 }
             }
         }
-        stage('Remove Unused docker image') {
+        stage('Remove unused docker image') {
             steps{
                 sh "docker rmi $registry:$BUILD_NUMBER"
             }
