@@ -57,6 +57,27 @@ pipeline {
                 }
             }
         }
+        stage('Update capstone-cluster config') {
+			steps {
+				withAWS(region:'us-west-2', credentials:'AWS') {
+					sh 'aws eks --region us-west-2 update-kubeconfig --name capstone-cluster'
+				}
+			}
+		}
+        stage('Set Kubectl Context to Cluster') {
+            steps{
+                withAWS(region:'us-west-2', credentials:'AWS') {
+                    sh 'kubectl config use-context arn:aws:eks:us-west-2:589247310786:cluster/capstone-cluster'
+                }
+           }
+        }
+        stage('Deploy to Blue Zone') {
+            steps {
+                withAWS(region:'us-west-2', credentials:'AWS') {
+                    sh 'kubectl apply -f blue-deployment.json'
+                }
+            }
+        }
         stage('Remove unused docker image') {
             steps{
                 sh "docker rmi $registry:$BUILD_NUMBER"
